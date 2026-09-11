@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite
+*.sqlite3
+sql_app_final.db
+app.db
+.env
+uploads/*
+!uploads/.gitkeep

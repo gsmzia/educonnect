@@ -1,0 +1,60 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="20dp"
+    android:viewportWidth="200"
+    android:viewportHeight="20">
+    <!-- Audio Waveform Bars Graphic Matching Screenshot -->
+    <path
+        android:fillColor="#5A577A"
+        android:pathData="
+        M4,8 h2 v4 h-2 Z
+        M8,6 h2 v8 h-2 Z
+        M12,4 h2 v12 h-2 Z
+        M16,7 h2 v6 h-2 Z
+        M20,3 h2 v14 h-2 Z
+        M24,5 h2 v10 h-2 Z
+        M28,2 h2 v16 h-2 Z
+        M32,6 h2 v8 h-2 Z
+        M36,4 h2 v12 h-2 Z
+        M40,7 h2 v6 h-2 Z
+        M44,2 h2 v16 h-2 Z
+        M48,5 h2 v10 h-2 Z
+        M52,8 h2 v4 h-2 Z
+        M56,3 h2 v14 h-2 Z
+        M60,6 h2 v8 h-2 Z
+        M64,2 h2 v16 h-2 Z
+        M68,4 h2 v12 h-2 Z
+        M72,7 h2 v6 h-2 Z
+        M76,3 h2 v14 h-2 Z
+        M80,5 h2 v10 h-2 Z
+        M84,8 h2 v4 h-2 Z
+        M88,2 h2 v16 h-2 Z
+        M92,6 h2 v8 h-2 Z
+        M96,4 h2 v12 h-2 Z
+        M100,7 h2 v6 h-2 Z
+        M104,2 h2 v16 h-2 Z
+        M108,5 h2 v10 h-2 Z
+        M112,8 h2 v4 h-2 Z
+        M116,3 h2 v14 h-2 Z
+        M120,6 h2 v8 h-2 Z
+        M124,2 h2 v16 h-2 Z
+        M128,4 h2 v12 h-2 Z
+        M132,7 h2 v6 h-2 Z
+        M136,3 h2 v14 h-2 Z
+        M140,5 h2 v10 h-2 Z
+        M144,8 h2 v4 h-2 Z
+        M148,2 h2 v16 h-2 Z
+        M152,6 h2 v8 h-2 Z
+        M156,4 h2 v12 h-2 Z
+        M160,7 h2 v6 h-2 Z
+        M164,2 h2 v16 h-2 Z
+        M168,5 h2 v10 h-2 Z
+        M172,8 h2 v4 h-2 Z
+        M176,3 h2 v14 h-2 Z
+        M180,6 h2 v8 h-2 Z
+        M184,2 h2 v16 h-2 Z
+        M188,4 h2 v12 h-2 Z
+        M192,7 h2 v6 h-2 Z
+        M196,5 h2 v10 h-2 Z
+        " />
+</vector>

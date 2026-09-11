@@ -1,0 +1,14 @@
+fastapi>=0.110.0,<0.116.0
+uvicorn>=0.29.0,<0.35.0
+gunicorn>=22.0.0,<24.0.0
+sqlalchemy>=2.0.29,<2.1.0
+python-multipart>=0.0.9,<0.0.21
+passlib>=1.7.4,<2.0.0
+bcrypt>=4.0.1,<5.0.0
+pydantic>=2.7.0,<3.0.0
+email-validator>=2.0.0,<3.0.0
+aiofiles>=23.2.1,<25.0.0
+requests>=2.31.0,<3.0.0
+psycopg2-binary>=2.9.9,<3.0.0
+cloudinary>=1.39.0,<2.0.0
+firebase-admin>=6.5.0,<8.0.0

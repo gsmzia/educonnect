@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- app_prefs contains the bearer token and current signed-in identity. -->
+        <exclude domain="sharedpref" path="app_prefs.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <!-- A device-to-device restore must also require a fresh sign-in. -->
+        <exclude domain="sharedpref" path="app_prefs.xml" />
+    </device-transfer>
+</data-extraction-rules>

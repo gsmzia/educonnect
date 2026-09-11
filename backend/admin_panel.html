@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduConnect — Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0D0A22; color: #E2E8F0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+        .topbar { background: #13102C; border-bottom: 1px solid #221D47; padding: 16px 32px; display: flex; align-items: center; gap: 14px; }
+        .brand { font-size: 22px; font-weight: 800; }
+        .brand .edu { color: #fff; }
+        .brand .connect { color: #A855F7; }
+        .brand-sub { font-size: 12px; color: #64748B; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+        .badge-admin { margin-left: auto; background: #A855F7; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+        .login-wrap { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 65px); padding: 20px; }
+        .login-card { background: #13102C; border: 1px solid #221D47; border-radius: 20px; padding: 40px 36px; width: 100%; max-width: 420px; text-align: center; }
+        .login-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .login-card p { color: #8B88A6; font-size: 13px; margin-bottom: 28px; }
+        input[type="password"], input[type="text"] { width: 100%; background: #181438; border: 1px solid #221D47; border-radius: 12px; padding: 12px 16px; color: #fff; font-size: 15px; outline: none; transition: border-color 0.2s; margin-bottom: 14px; }
+        input:focus { border-color: #A855F7; }
+        .btn { width: 100%; padding: 13px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.88; }
+        .btn-purple { background: #8B6BFF; color: #fff; }
+        .btn-green { background: #22c55e; color: #fff; }
+        .btn-red { background: #ef4444; color: #fff; }
+        .btn-sm { width: auto; padding: 7px 18px; font-size: 13px; border-radius: 8px; }
+        .dashboard { padding: 28px 32px; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: #13102C; border: 1px solid #221D47; border-radius: 16px; padding: 18px 20px; }
+        .stat-card .num { font-size: 30px; font-weight: 800; color: #A855F7; }
+        .stat-card .lbl { font-size: 12px; color: #8B88A6; margin-top: 4px; }
+        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab { padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid #221D47; background: #13102C; color: #8B88A6; transition: all 0.2s; }
+        .tab.active { background: #A855F7; border-color: #A855F7; color: #fff; }
+        .table-wrap { background: #13102C; border: 1px solid #221D47; border-radius: 16px; overflow: hidden; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { background: #0D0A22; padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #8B88A6; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 14px 16px; font-size: 13.5px; border-top: 1px solid #1A1438; }
+        tr:hover td { background: #181438; }
+        .status-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .status-pending_email_verification { background: #1e293b; color: #94a3b8; }
+        .status-pending_admin_review { background: #431407; color: #fb923c; }
+        .status-verified { background: #052e16; color: #4ade80; }
+        .status-rejected { background: #450a0a; color: #f87171; }
+        .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .empty-state { padding: 48px 20px; text-align: center; color: #8B88A6; }
+        .error-msg { background: #450a0a; border: 1px solid #7f1d1d; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #fca5a5; }
+        .toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: #fff; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 14px; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: none; }
+        .toast.error { background: #ef4444; }
+        .uni-name { font-weight: 600; color: #fff; }
+        .uni-key { font-family: monospace; font-size: 12px; color: #A855F7; }
+        .founder-email { color: #8B88A6; font-size: 12px; margin-top: 2px; }
+        @media (max-width: 768px) { .dashboard { padding: 16px; } }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div>
+        <div class="brand"><span class="edu">Edu</span><span class="connect">Connect</span></div>
+        <div class="brand-sub">Admin Panel</div>
+    </div>
+    <span class="badge-admin" id="loggedInBadge" style="display:none;">Admin</span>
+</div>
+
+<div class="login-wrap" id="loginScreen">
+    <div class="login-card">
+        <h2>Admin Access</h2>
+        <p>Enter your backend URL and admin secret to manage university founder verifications.</p>
+        <div id="loginError" class="error-msg" style="display:none;"></div>
+        <input type="text" id="apiBase" placeholder="Backend URL (e.g. https://educonnect-backend-7wsz.onrender.com)" />
+        <input type="password" id="adminSecret" placeholder="Admin Secret (ADMIN_SECRET env var)" />
+        <button class="btn btn-purple" onclick="doLogin()">Access Dashboard</button>
+    </div>
+</div>
+
+<div class="dashboard" id="dashboard" style="display:none;">
+    <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statTotal">0</div><div class="lbl">Total Universities</div></div>
+        <div class="stat-card"><div class="num" id="statPending" style="color:#f97316;">0</div><div class="lbl">Pending Review</div></div>
+        <div class="stat-card"><div class="num" id="statVerified" style="color:#22c55e;">0</div><div class="lbl">Verified</div></div>
+        <div class="stat-card"><div class="num" id="statRejected" style="color:#ef4444;">0</div><div class="lbl">Rejected</div></div>
+    </div>
+    <div class="tabs">
+        <div class="tab active" onclick="filterTable('all',this)">All</div>
+        <div class="tab" onclick="filterTable('pending_admin_review',this)">Pending Review</div>
+        <div class="tab" onclick="filterTable('pending_email_verification',this)">Email Not Verified</div>
+        <div class="tab" onclick="filterTable('verified',this)">Verified</div>
+        <div class="tab" onclick="filterTable('rejected',this)">Rejected</div>
+    </div>
+    <div class="section-title">
+        University Applications
+        <button class="btn btn-purple btn-sm" style="margin-left:auto;" onclick="loadData()">Refresh</button>
+    </div>
+    <div class="table-wrap"><div id="tableContent"><div class="empty-state"><p>Loading...</p></div></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let API_BASE="", ADMIN_SECRET="", allData=[], currentFilter="all";
+
+function showToast(msg,isError=false){
+    const t=document.getElementById("toast");
+    t.textContent=msg; t.className="toast"+(isError?" error":""); t.style.display="block";
+    setTimeout(()=>{t.style.display="none";},3500);
+}
+
+async function doLogin(){
+    const base=document.getElementById("apiBase").value.trim().replace(/\/$/,"");
+    const secret=document.getElementById("adminSecret").value.trim();
+    const errEl=document.getElementById("loginError");
+    if(!base||!secret){errEl.textContent="Please fill in both fields.";errEl.style.display="block";return;}
+    try{
+        const res=await fetch(`${base}/api/academic/admin/all-universities`,{headers:{"X-Admin-Secret":secret}});
+        if(res.status===403||res.status===503){errEl.textContent="Invalid admin secret.";errEl.style.display="block";return;}
+        if(!res.ok){errEl.textContent="Server error "+res.status+". Check backend URL.";errEl.style.display="block";return;}
+        API_BASE=base; ADMIN_SECRET=secret; errEl.style.display="none";
+        document.getElementById("loginScreen").style.display="none";
+        document.getElementById("dashboard").style.display="block";
+        document.getElementById("loggedInBadge").style.display="inline-block";
+        const data=await res.json(); processData(data.universities||[]);
+    }catch(e){errEl.textContent="Connection failed: "+e.message;errEl.style.display="block";}
+}
+
+async function loadData(){
+    try{
+        const res=await fetch(`${API_BASE}/api/academic/admin/all-universities`,{headers:{"X-Admin-Secret":ADMIN_SECRET}});
+        const data=await res.json(); processData(data.universities||[]);
+    }catch(e){showToast("Refresh failed: "+e.message,true);}
+}
+
+function processData(unis){
+    allData=unis;
+    document.getElementById("statTotal").textContent=unis.length;
+    document.getElementById("statPending").textContent=unis.filter(u=>u.status==="pending_admin_review").length;
+    document.getElementById("statVerified").textContent=unis.filter(u=>u.status==="verified").length;
+    document.getElementById("statRejected").textContent=unis.filter(u=>u.status==="rejected").length;
+    renderTable(currentFilter);
+}
+
+function filterTable(filter,el){
+    currentFilter=filter;
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    el.classList.add("active"); renderTable(filter);
+}
+
+function renderTable(filter){
+    const filtered=filter==="all"?allData:allData.filter(u=>u.status===filter);
+    const tc=document.getElementById("tableContent");
+    if(filtered.length===0){tc.innerHTML='<div class="empty-state"><p>No universities found.</p></div>';return;}
+    const rows=filtered.map(u=>`
+        <tr>
+            <td><div class="uni-name">${esc(u.name)}</div><div class="uni-key">${esc(u.uni_key||"—")}</div></td>
+            <td>${esc(u.country)}</td>
+            <td>${esc(u.founder_name)} (@${esc(u.founder_username)})<div class="founder-email">${esc(u.founder_email||"—")}</div></td>
+            <td>${esc(u.created_at?u.created_at.slice(0,10):"—")}</td>
+            <td><span class="status-badge status-${u.status}">${statusLabel(u.status)}</span></td>
+            <td><div class="actions">
+                ${u.status!=="verified"?`<button class="btn btn-green btn-sm" onclick="setStatus(${u.id},'verified')">Verify</button>`:""}
+                ${u.status!=="rejected"?`<button class="btn btn-red btn-sm" onclick="setStatus(${u.id},'rejected')">Reject</button>`:""}
+            </div></td>
+        </tr>`).join("");
+    tc.innerHTML=`<table><thead><tr><th>University</th><th>Country</th><th>Founder</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+async function setStatus(uniId,newStatus){
+    const action=newStatus==="verified"?"VERIFY":"REJECT";
+    if(!confirm("Are you sure you want to "+action+" this university?")) return;
+    try{
+        const res=await fetch(`${API_BASE}/api/academic/admin/set-university-status/${uniId}?new_status=${newStatus}`,
+            {method:"POST",headers:{"X-Admin-Secret":ADMIN_SECRET}});
+        if(!res.ok){const e=await res.json();showToast(e.detail||"Error",true);return;}
+        const data=await res.json(); showToast(data.message); await loadData();
+    }catch(e){showToast("Failed: "+e.message,true);}
+}
+
+function statusLabel(s){
+    return {"pending_email_verification":"Email Pending","pending_admin_review":"Pending Review","verified":"Verified","rejected":"Rejected"}[s]||s;
+}
+
+function esc(str){
+    if(!str)return"";
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+document.addEventListener("keydown",e=>{
+    if(e.key==="Enter"&&document.getElementById("loginScreen").style.display!=="none") doLogin();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  EduConnect Clean Message Notification Layout (Expanded)
+  Clean WhatsApp-style expanded view for full multi-line reading on pulldown, with sender avatar and zero duplicate app logos.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notif_cm_root_expanded"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="104dp"
+    android:gravity="top"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_notif_card"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp">
+
+    <!-- ── LEFT: Sender Avatar + Badge Overlay ─── -->
+    <FrameLayout
+        android:layout_width="58dp"
+        android:layout_height="58dp">
+
+        <ImageView
+            android:id="@+id/notif_cm_app_icon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:contentDescription="Sender Avatar" />
+
+        <ImageView
+            android:id="@+id/notif_cm_badge"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_gravity="bottom|end"
+            android:padding="4.5dp"
+            android:background="@drawable/bg_notif_badge"
+            android:src="@drawable/ic_badge_chat"
+            android:scaleType="fitCenter"
+            android:contentDescription="Type Badge" />
+    </FrameLayout>
+
+    <!-- ── RIGHT: Content ─── -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="14dp">
+
+        <!-- Row 1: Sender Name + Relative Time + Clock Time on right -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/notif_cm_sender"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sender"
+                android:textColor="#FFFFFF"
+                android:textSize="15.5sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/notif_cm_time_ago"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="now"
+                android:textColor="#8E8CA0"
+                android:textSize="12sp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp" />
+
+            <TextView
+                android:id="@+id/notif_cm_msg_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10:45 AM"
+                android:textColor="#8E8CA0"
+                android:textSize="11.5sp"
+                android:paddingStart="4dp" />
+        </LinearLayout>
+
+        <!-- Row 2: Full Message Text (Expands up to 12 lines for long messages) -->
+        <TextView
+            android:id="@+id/notif_cm_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Message preview..."
+            android:textColor="#D8D6EC"
+            android:textSize="14sp"
+            android:maxLines="12"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2.5dp" />
+    </LinearLayout>
+</LinearLayout>

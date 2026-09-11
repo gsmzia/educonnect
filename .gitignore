@@ -1,0 +1,67 @@
+# IDE and build tools
+*.iml
+.gradle
+.gradle-local/
+/local.properties
+.idea/
+.vscode/
+.kotlin/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Secrets, keystores and credentials — NEVER PUBLISH
+*.jks
+*.keystore
+serviceAccountKey.json
+service-account*.json
+*-firebase-adminsdk-*.json
+
+# Firebase Client configuration (Contains API Keys)
+google-services.json
+*/google-services.json
+**/google-services.json
+!google-services.json.example
+!*/google-services.json.example
+!**/google-services.json.example
+
+# Runtime data, database, user media, generated output
+.env
+.env.*
+!.env.example
+uploads/
+backend/uploads/
+*.db
+*.sqlite
+*.sqlite3
+*.apk
+*.aab
+*.zip
+backup/
+hs_err_pid*.log
+anr_rg.txt
+audit_hits.txt
+build_errors.txt
+build_log.txt
+build_output.txt
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local root temporary scripts & raw assets
+fix_upload.py
+generate_icons.py
+run.py
+run_app.bat
+run_server.bat
+EDU Connect Notification Sound.mpeg
+app icon.png
+logo for email.png
+backend/reset_database.py
+backend/test_api.py

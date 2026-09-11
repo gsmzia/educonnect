@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Camera captures passed to the in-app composer only. -->
+    <cache-path name="camera_media" path="camera_media/" />
+    <!-- Cached media/document fallback opened through ACTION_VIEW. -->
+    <cache-path name="media_cache" path="media_cache/" />
+    <!-- Downloaded documents opened in an external viewer. -->
+    <external-path name="educonnect_documents" path="Download/EduConnect Documents/" />
+</paths>

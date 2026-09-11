@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#16132D"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <!-- Sender Name (Bold) -->
+    <TextView
+        android:id="@+id/notif_sender_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Voice Message"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <!-- Subtitle (e.g. Voice message (00:28)) -->
+    <TextView
+        android:id="@+id/notif_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="Voice message (00:28)"
+        android:textColor="#A09EBF"
+        android:textSize="12.5sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <!-- Voice Note Playback Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Circular Purple Play / Pause Action Button -->
+        <ImageView
+            android:id="@+id/btn_notif_play_pause"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_notif_play"
+            android:contentDescription="Play or Pause Voice Note" />
+
+        <!-- Waveform Progress & Timestamps Column -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+
+            <!-- Waveform bars fill progressively with purple (no horizontal line) -->
+            <ProgressBar
+                android:id="@+id/notif_audio_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:progress="0"
+                android:max="100"
+                android:progressDrawable="@drawable/notif_waveform_progress_drawable" />
+
+            <!-- Timestamps Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/notif_cur_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="00:00"
+                    android:textColor="#7A7899"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/notif_total_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:28"
+                    android:textColor="#7A7899"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

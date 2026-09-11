@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Legacy Auto Backup rule for Android versions before data-extraction-rules. -->
+    <exclude domain="sharedpref" path="app_prefs.xml" />
+</full-backup-content>
