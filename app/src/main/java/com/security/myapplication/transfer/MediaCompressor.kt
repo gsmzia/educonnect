@@ -1,8 +1,12 @@
+@file:androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+@file:OptIn(androidx.media3.common.util.UnstableApi::class)
+
 package com.security.myapplication.transfer
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.annotation.OptIn as AndroidOptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
@@ -28,6 +32,8 @@ import kotlin.coroutines.resumeWith
  * smaller than its source; unsupported/OEM-problematic formats simply retain
  * the original file, so an optimization cannot turn into a failed attachment.
  */
+@AndroidOptIn(UnstableApi::class)
+@OptIn(UnstableApi::class)
 object MediaCompressor {
     private const val MIN_VIDEO_BYTES = 5L * 1024L * 1024L
     private const val MIN_JPEG_BYTES = 1L * 1024L * 1024L

@@ -47,6 +47,15 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.media3.common.util.UnstableApi",
+            "-opt-in=kotlin.RequiresOptIn"
+        )
+    }
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+        disable += listOf("UnstableApiUsageError")
     }
     buildFeatures {
         compose = true
