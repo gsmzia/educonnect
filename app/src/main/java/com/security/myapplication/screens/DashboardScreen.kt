@@ -51,6 +51,8 @@ import androidx.navigation.NavController
 import com.security.myapplication.models.*
 import com.security.myapplication.network.ApiClient
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import androidx.compose.material.icons.outlined.School
@@ -151,6 +153,7 @@ fun DashboardScreen(userId: Int, role: String, navController: NavController) {
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     val sharedPrefs = context.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+    val cachedKey = sharedPrefs.getString("cached_uni_key_$userId", "") ?: "none"
     val gson = Gson()
 
     // Global online presence heartbeat (every 3s)
@@ -980,7 +983,7 @@ fun DashboardScreen(userId: Int, role: String, navController: NavController) {
                                     }
                                 } else {
                                     StudentGroupsList(
-                                        user = user ?: User(id = userId, email = "", username = "", role = "student"),
+                                        user = user ?: User(id = userId, email = "", username = "", name = "", role = "student", degree = null, major = null, academic_year = null),
                                         groups = groups,
                                         onGroupSelected = { g ->
                                             selectedGroup = g
@@ -1087,103 +1090,6 @@ fun DashboardScreen(userId: Int, role: String, navController: NavController) {
                 }
             }
         }
-    }
-}
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Student Groups List (WhatsApp style)
-// ─────────────────────────────────────────────────────────────────────────────
-
-@Composable
-fun StudentGroupsList(
-    user: User,
-    groups: List<Group>,
-    onGroupSelected: (Group) -> Unit,
-    onRefresh: () -> Unit,
-    onResetProfile: () -> Unit
-) {
-    Column(modifier = Modifier.fillMaxSize()) {
-
-
-
-        // ── Groups Header ────────────────────────────────────────────────────
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "Your Academic Groups",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            TextButton(onClick = onRefresh) { Text("🔄 Sync") }
-        }
-
-        HorizontalDivider()
-
-        // ── Groups List ──────────────────────────────────────────────────────
-        if (groups.isEmpty()) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
-                    Text("📭", fontSize = 64.sp)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text("No Groups Yet", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        "No teacher has created subjects for ${user.major} – ${user.academic_year} yet.\n\nTap '🔄 Sync' when your teacher adds groups.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        } else {
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(groups) { group ->
-                    StudentGroupListItem(group = group, onClick = { onGroupSelected(group) })
-                    HorizontalDivider(modifier = Modifier.padding(start = 80.dp))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun StudentGroupListItem(group: Group, onClick: () -> Unit) {
-    val avatarColors = listOf(
-        Color(0xFF6200EE), Color(0xFF00897B), Color(0xFFE53935),
-        Color(0xFF1565C0), Color(0xFF6D4C41), Color(0xFF558B2F)
-    )
-    val avatarColor = avatarColors[group.id % avatarColors.size]
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier.size(54.dp).clip(CircleShape).background(avatarColor),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(group.degree, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(group.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, maxLines = 1)
-            Text(
-                "${group.major} • ${group.academic_year}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
-            )
-        }
-        Text("›", fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    }
 
         // ── Founder Quick Add Subject Dialog ──────────────────────────────────
         if (showQuickAddSubjectDialog) {
@@ -1341,5 +1247,102 @@ fun StudentGroupListItem(group: Group, onClick: () -> Unit) {
                 }
             )
         }
+    }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Student Groups List (WhatsApp style)
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun StudentGroupsList(
+    user: User,
+    groups: List<Group>,
+    onGroupSelected: (Group) -> Unit,
+    onRefresh: () -> Unit,
+    onResetProfile: () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+
+
+
+        // ── Groups Header ────────────────────────────────────────────────────
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "Your Academic Groups",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            TextButton(onClick = onRefresh) { Text("🔄 Sync") }
+        }
+
+        HorizontalDivider()
+
+        // ── Groups List ──────────────────────────────────────────────────────
+        if (groups.isEmpty()) {
+            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
+                    Text("📭", fontSize = 64.sp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("No Groups Yet", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "No teacher has created subjects for ${user.major} – ${user.academic_year} yet.\n\nTap '🔄 Sync' when your teacher adds groups.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        } else {
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(groups) { group ->
+                    StudentGroupListItem(group = group, onClick = { onGroupSelected(group) })
+                    HorizontalDivider(modifier = Modifier.padding(start = 80.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StudentGroupListItem(group: Group, onClick: () -> Unit) {
+    val avatarColors = listOf(
+        Color(0xFF6200EE), Color(0xFF00897B), Color(0xFFE53935),
+        Color(0xFF1565C0), Color(0xFF6D4C41), Color(0xFF558B2F)
+    )
+    val avatarColor = avatarColors[group.id % avatarColors.size]
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier.size(54.dp).clip(CircleShape).background(avatarColor),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(group.degree, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(group.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, maxLines = 1)
+            Text(
+                "${group.major} • ${group.academic_year}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
+            )
+        }
+        Text("›", fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
 
 }
