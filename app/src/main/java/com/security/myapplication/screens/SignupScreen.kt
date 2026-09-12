@@ -360,7 +360,7 @@ fun SignupScreen(navController: NavController) {
                                             keyValidationError = null
                                         } else {
                                             verifiedUniName = null
-                                            keyValidationError = res.detail ?: "Invalid Campus Key"
+                                            keyValidationError = res.message ?: res.detail ?: "Invalid Campus Key"
                                         }
                                     } catch (e: Exception) {
                                         verifiedUniName = null

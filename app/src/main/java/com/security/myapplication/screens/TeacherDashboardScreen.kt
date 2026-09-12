@@ -983,6 +983,90 @@ fun TeacherDashboardScreen(userId: Int, navController: NavController) {
                 }
             }
         }
+
+        // ── Teacher Claim Confirmation Dialog ─────────────────────────────────
+        if (subjectToClaim != null) {
+            val subj = subjectToClaim!!
+            AlertDialog(
+                onDismissRequest = { if (!isClaimingSubject) subjectToClaim = null },
+                containerColor = Color(0xFF141130),
+                tonalElevation = 0.dp,
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.Campaign, null, tint = Color(0xFFF97316), modifier = Modifier.size(22.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("Confirm Instructor Role", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                    }
+                },
+                text = {
+                    Column {
+                        Text(
+                            "Are you sure you are the instructor for:",
+                            color = Color(0xFF8B88A6),
+                            fontSize = 13.sp
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFF1F1A44))
+                                .padding(12.dp)
+                        ) {
+                            Column {
+                                Text(subj.subject_name, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                                Text("${subj.program_name} ${subj.department_name} • Semester ${subj.semester_num}", color = Color(0xFFA78BFA), fontSize = 12.sp)
+                            }
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            "By confirming, you will be assigned as the official teacher and become the Admin of this class group.",
+                            color = Color(0xFFCBD5E1),
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val cachedKey = sharedPrefs.getString("cached_uni_key_$userId", "") ?: ""
+                            isClaimingSubject = true
+                            coroutineScope.launch {
+                                try {
+                                    val res = withContext(Dispatchers.IO) {
+                                        ApiClient.apiService.claimSubject(
+                                            com.security.myapplication.academic.ClaimSubjectRequest(
+                                                uni_key = cachedKey,
+                                                subject_id = subj.subject_id,
+                                                teacher_id = userId
+                                            )
+                                        )
+                                    }
+                                    Toast.makeText(context, res.message, Toast.LENGTH_LONG).show()
+                                    subjectToClaim = null
+                                    syncData()
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, e.message ?: "Failed to claim subject.", Toast.LENGTH_LONG).show()
+                                } finally {
+                                    isClaimingSubject = false
+                                }
+                            }
+                        },
+                        enabled = !isClaimingSubject,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF30C96B))
+                    ) {
+                        if (isClaimingSubject) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                        else Text("Yes, I'm the Teacher", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { if (!isClaimingSubject) subjectToClaim = null }) {
+                        Text("Cancel", color = Color(0xFF8B88A6))
+                    }
+                }
+            )
+        }
     }
 } // CompositionLocalProvider
 } // TeacherDashboardScreen
@@ -1222,89 +1306,4 @@ fun TeacherMenuDropdownContent(
             }
         }
     }
-
-        // ── Teacher Claim Confirmation Dialog ─────────────────────────────────
-        if (subjectToClaim != null) {
-            val subj = subjectToClaim!!
-            AlertDialog(
-                onDismissRequest = { if (!isClaimingSubject) subjectToClaim = null },
-                containerColor = Color(0xFF141130),
-                tonalElevation = 0.dp,
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Outlined.Campaign, null, tint = Color(0xFFF97316), modifier = Modifier.size(22.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text("Confirm Instructor Role", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 17.sp)
-                    }
-                },
-                text = {
-                    Column {
-                        Text(
-                            "Are you sure you are the instructor for:",
-                            color = Color(0xFF8B88A6),
-                            fontSize = 13.sp
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFF1F1A44))
-                                .padding(12.dp)
-                        ) {
-                            Column {
-                                Text(subj.subject_name, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                                Text("${subj.program_name} ${subj.department_name} • Semester ${subj.semester_num}", color = Color(0xFFA78BFA), fontSize = 12.sp)
-                            }
-                        }
-                        Spacer(Modifier.height(12.dp))
-                        Text(
-                            "By confirming, you will be assigned as the official teacher and become the Admin of this class group.",
-                            color = Color(0xFFCBD5E1),
-                            fontSize = 12.sp,
-                            lineHeight = 16.sp
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            val cachedKey = sharedPrefs.getString("cached_uni_key_$userId", "") ?: ""
-                            isClaimingSubject = true
-                            coroutineScope.launch {
-                                try {
-                                    val res = withContext(Dispatchers.IO) {
-                                        ApiClient.apiService.claimSubject(
-                                            com.security.myapplication.academic.ClaimSubjectRequest(
-                                                uni_key = cachedKey,
-                                                subject_id = subj.subject_id,
-                                                teacher_id = userId
-                                            )
-                                        )
-                                    }
-                                    Toast.makeText(context, res.message, Toast.LENGTH_LONG).show()
-                                    subjectToClaim = null
-                                    syncData()
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, e.message ?: "Failed to claim subject.", Toast.LENGTH_LONG).show()
-                                } finally {
-                                    isClaimingSubject = false
-                                }
-                            }
-                        },
-                        enabled = !isClaimingSubject,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF30C96B))
-                    ) {
-                        if (isClaimingSubject) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
-                        else Text("Yes, I'm the Teacher", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { if (!isClaimingSubject) subjectToClaim = null }) {
-                        Text("Cancel", color = Color(0xFF8B88A6))
-                    }
-                }
-            )
-        }
-
 }

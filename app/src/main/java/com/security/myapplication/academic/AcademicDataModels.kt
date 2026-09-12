@@ -22,7 +22,8 @@ data class ValidateKeyResponse(
     val name: String? = null,
     val country: String? = null,
     val uni_key: String? = null,
-    val message: String? = null
+    val message: String? = null,
+    val detail: String? = null
 )
 
 // ── Curriculum Setup Models (Founder Wizard Input) ────────────────────────────

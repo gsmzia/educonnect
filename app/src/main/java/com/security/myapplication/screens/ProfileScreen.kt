@@ -79,30 +79,34 @@ fun ProfileScreen(
     }
 
     // Compress Uri -> Base64 (center-crop to square, then scale — like WhatsApp)
-    fun encodeUri(uri: Uri): String? = try {
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
-        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
-        var sample = 1
-        while (bounds.outWidth / sample > 1200 || bounds.outHeight / sample > 1200) sample *= 2
-        val decodeOptions = BitmapFactory.Options().apply {
-            inSampleSize = sample
-            inPreferredConfig = Bitmap.Config.RGB_565
+    fun encodeUri(uri: Uri): String? {
+        return try {
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+            var sample = 1
+            while (bounds.outWidth / sample > 1200 || bounds.outHeight / sample > 1200) sample *= 2
+            val decodeOptions = BitmapFactory.Options().apply {
+                inSampleSize = sample
+                inPreferredConfig = Bitmap.Config.RGB_565
+            }
+            val orig = context.contentResolver.openInputStream(uri)?.use {
+                BitmapFactory.decodeStream(it, null, decodeOptions)
+            } ?: return null
+            val size = minOf(orig.width, orig.height)
+            val x = (orig.width - size) / 2
+            val y = (orig.height - size) / 2
+            val cropped = Bitmap.createBitmap(orig, x, y, size, size)
+            if (cropped !== orig) orig.recycle()
+            val scaled = Bitmap.createScaledBitmap(cropped, 600, 600, true)
+            if (scaled !== cropped) cropped.recycle()
+            val out = ByteArrayOutputStream()
+            scaled.compress(Bitmap.CompressFormat.JPEG, 85, out)
+            Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
+        } catch (e: Exception) {
+            null
         }
-        val orig = context.contentResolver.openInputStream(uri)?.use {
-            BitmapFactory.decodeStream(it, null, decodeOptions)
-        } ?: return null
-        val size = minOf(orig.width, orig.height)
-        val x = (orig.width - size) / 2
-        val y = (orig.height - size) / 2
-        val cropped = Bitmap.createBitmap(orig, x, y, size, size)
-        if (cropped !== orig) orig.recycle()
-        val scaled = Bitmap.createScaledBitmap(cropped, 600, 600, true)
-        if (scaled !== cropped) cropped.recycle()
-        val out = ByteArrayOutputStream()
-        scaled.compress(Bitmap.CompressFormat.JPEG, 85, out)
-        Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
-    } catch (_: Exception) { null }
+    }
 
     val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
