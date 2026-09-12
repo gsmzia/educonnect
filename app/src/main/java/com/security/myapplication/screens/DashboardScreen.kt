@@ -711,16 +711,27 @@ fun DashboardScreen(userId: Int, role: String, navController: NavController) {
                                             )
                                             user = updated
                                             showEditProfileDialog = false
-                                        } catch (_: Exception) {}
+                                        } catch (e: Exception) {}
                                         isSavingProfile = false
                                     }
                                 }
                             },
                             enabled = !isSavingProfile && editNameText.isNotBlank(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B6BFF))
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF8B6BFF),
+                                disabledContainerColor = Color(0xFF8B6BFF).copy(alpha = 0.5f)
+                            ),
+                            shape = RoundedCornerShape(10.dp)
                         ) {
-                            if (isSavingProfile) CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White)
-                            else Text("Save", fontWeight = FontWeight.Bold)
+                            if (isSavingProfile) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                            } else {
+                                Text("Save", fontWeight = FontWeight.Bold, color = Color.White)
+                            }
                         }
                     },
                     dismissButton = {
