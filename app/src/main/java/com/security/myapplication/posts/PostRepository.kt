@@ -26,7 +26,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 import android.provider.OpenableColumns
 import java.io.IOException
-import java.net.InterruptedIOException
+import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.concurrent.ConcurrentHashMap
